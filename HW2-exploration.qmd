@@ -1,0 +1,150 @@
+---
+title: "Arctic Sea Ice Data Exploration"
+author: "Brooke Grazda"
+date: 2025-02-07
+format:
+  html:
+    embed-resources: true # this ensures that your rendered .html file is self-contained, so we (your instructors) can open it and view all your work
+---
+
+```{r}
+library(tidyverse)
+library(here)
+```
+
+```{r, warning=FALSE, message=FALSE}
+
+# Load data
+ice_area <- read_csv(here('sea_ice_data', 'sibt_areas_v2.csv'))
+ice_extent <-read_csv(here('sea_ice_data', 'sibt_extents_v2.csv')) 
+
+ice_monthly <- readxl::read_excel(here("sea_ice_data", "Sea_Ice_Index_Monthly_Data_by_Year_G02135_v3.0.xlsx"))
+
+roc_arctic <- readxl::read_excel(here("sea_ice_data", "Sea_Ice_Index_Rates_of_Change_G02135_v3.0.xlsx"))
+```
+```{r}
+# Rename first column as "YYYYDDD" and the rest based on the first row
+colnames(ice_extent) <- ice_extent[1,]
+ice_extent <- ice_extent[-1,]  # Remove the row used for column names
+# Remove the first row (which contains "RegnArea")
+ice_area_cleaned <- ice_area[-1, ]
+
+# Convert to long format
+extent_tidy <- ice_extent %>%
+  pivot_longer(cols = 2:18, names_to = "Region", values_to = "ice_extent") %>%
+  slice(-(1:18)) |>  # Fine to start with year 1850
+  mutate(#YYYDDD = (as.string(YYYYDDD)),
+         ice_extent = as.numeric(ice_extent)) |> # extent in square kilometers 
+  mutate(year = sub("^(.{4}).*", "\\1", YYYYDDD)) |> 
+  select(-YYYYDDD) |> 
+  group_by(Region, year) |> 
+  summarise(ice_ave = mean(ice_extent)) |> 
+  ungroup() |> 
+  mutate(region = str_trim(Region)) |> 
+  filter(Region != 'Northern_Hemisphere')
+```
+
+```{r}
+tidy_monthly_ice <- ice_monthly |> 
+  janitor::clean_names() |> 
+  rename(year = x1) |> 
+  select(-x14) |> 
+  pivot_longer(cols = 2:13,
+               names_to = "month", 
+               values_to = "ice_extent") |> 
+  slice(-(1:10))
+```
+
+## Plot #1
+```{r}
+# Plot #1
+ggplot(tidy_monthly_ice) +
+  geom_line(aes(x = year, y =annual)) +
+  theme_classic() +
+  labs(x = 'Year',
+       y = 'Arctic Ice Extent Index',
+       title = 'Annual Arctic Ice Extent Index Trends',
+       caption = 'Data from NOAA')
+```
+```{r}
+# fifteen_yr_ice <- tidy_monthly_ice |> 
+#   filter(year %in% c(1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,
+#                      2015,2016,2017,2018,2019,2020,2021,2022,2023,2023)) |> 
+#   mutate(month = factor(month(Date), levels = 1:12, labels = month.name)) 
+# 
+# ggplot(fifteen_yr_ice, aes(x = reorder(month, my(month)), y = ice_extent)) +
+#   geom_col()
+```
+## Plot #2
+```{r}
+
+north_hemisphere_ext <- extent_tidy |> 
+  slice(65:2688)
+  
+# Plot #2
+ggplot(extent_tidy, (aes(x = year, y = ice_ave, group = Region, fill = Region))) +
+  geom_area() +
+  labs(x = 'Year', y = 'Average Ice Extent (km^2)',
+       title = 'Sea Ice Extent in the Northern Hemisphere from 1924-2024',
+       fill = '') +
+  scale_y_continuous(labels = scales::comma_format()) +
+  scale_fill_viridis_d()+
+  theme_void() 
+
+
+```
+
+```{r}
+
+# Rename first column as "YYYYDDD" and the rest based on the first row
+colnames(roc_arctic) <- roc_arctic[1,]
+roc_arctic <- roc_arctic[-1,]  # Remove the row used for column names
+# Remove the first row (which contains "RegnArea")
+#ice_area_cleaned <- ice_area[-1, ]
+
+
+roc_clean <- roc_arctic |> 
+  janitor::clean_names() 
+
+roc_clean <- roc_clean |> 
+  rename_with(
+    ~ c("January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"),
+    .cols = 2:13) |>
+  slice(-1) |> 
+  rename(year = names(roc_clean)[1]) |> 
+  pivot_longer(cols = 2:13, names_to = 'month', values_to = 'change_miles_sq_per_month') |> 
+  slice(11:588) |> 
+  mutate(year_month = paste(year, '-', month),
+         change_miles_sq_per_month = as.integer(change_miles_sq_per_month)) |> 
+  group_by(year) |> 
+  summarise(ave_roc = mean(change_miles_sq_per_month, na.rm = TRUE))
+
+```
+
+## Plot #3
+```{r}
+# Plot #3
+ggplot(roc_clean, aes(x = year, y = ave_roc)) +
+  geom_bar(stat = "identity", fill = "skyblue") +  # Use bars for positive and negative values
+  geom_hline(yintercept = 0, color = "black") +  # Horizontal line at y = 0
+  labs(title = "Arctic Ice Rate of Change", x = "Year", y = "Rate of Change") +
+  theme_minimal()
+```
+
+
+1. What have you learned about your data? Have any potentially interesting patterns emerged?
+
+I was not entirely surprised to see all of my sea ice trends decreasing. I was surprised to see that they have a record of arctic sea ice extent from 1850. I thought it was very interesting to see the rates of change! It is not unusual to see the sea ice extent but it is cool to see how quickly something may change in a given year. 
+
+2. In HW #1, you outlined some questions that you wanted to answer using these data. Have you made any strides towards answering those questions? If yes, how so? If no, what next steps do you need to take (e.g. I need to create X plot type, I still need to track down Y data, I need to restructure existing data so that you can visualize it in Z ways, etc.)?
+
+
+Yes! I have plotted the temporal trends over the 40 year data period. I have not been able to answer the question of if the Northern or Southern Hemisphere ice is experiencing greater change due to a lack of data. I realize that my data is only outlining the Northern hemisphere so I may have to go back to the source where I downloaded the data initially to look for Southern hemisphere equivalents. I definitely need to restructure some of the data I have currently to be plottable and visually pleasing.
+
+
+3. What challenges do you foresee encountering with your data? These can be data wrangling and / or visualization challenges.
+Just from this exercise alone I foresee myself encountering issues with the sheer amount of data groups that I will be dealing with. Some ggplot things that I know I will be able to figure out, like perhaps breaking down the time blocks into shorter periods and faceting that way to see more closely continuous trends. Formatting the years so that it is not listing all the years overlapping may be a minor but necessary challenge. I envision breaking this down into smaller chunks as well. A less expected challenge may be finding ways to look for more interesting trends. I can maybe combine this dataset with global temperature data to visualize the inverse relationship. 
+
+
+
