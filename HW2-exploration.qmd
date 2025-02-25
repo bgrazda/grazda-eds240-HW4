@@ -10,6 +10,8 @@ format:
 ```{r}
 library(tidyverse)
 library(here)
+library(tmap)
+library(sf)
 ```
 
 ```{r, warning=FALSE, message=FALSE}
@@ -21,7 +23,12 @@ ice_extent <-read_csv(here('sea_ice_data', 'sibt_extents_v2.csv'))
 ice_monthly <- readxl::read_excel(here("sea_ice_data", "Sea_Ice_Index_Monthly_Data_by_Year_G02135_v3.0.xlsx"))
 
 roc_arctic <- readxl::read_excel(here("sea_ice_data", "Sea_Ice_Index_Rates_of_Change_G02135_v3.0.xlsx"))
+
+shapefile <- read_sf(here('ARPA_polygon', 'ARPA_polygon.shp'))
+
+latlong <- readxl::read_xlsx(here('sea_ice_data', 'arctic_regions_latlong.xlsx'))
 ```
+
 ```{r}
 # Rename first column as "YYYYDDD" and the rest based on the first row
 colnames(ice_extent) <- ice_extent[1,]
@@ -41,7 +48,8 @@ extent_tidy <- ice_extent %>%
   summarise(ice_ave = mean(ice_extent)) |> 
   ungroup() |> 
   mutate(region = str_trim(Region)) |> 
-  filter(Region != 'Northern_Hemisphere')
+  filter(Region != 'Northern_Hemisphere') |> 
+  left_join(latlong)
 ```
 
 ```{r}
@@ -58,13 +66,36 @@ tidy_monthly_ice <- ice_monthly |>
 ## Plot #1
 ```{r}
 # Plot #1
-ggplot(tidy_monthly_ice) +
-  geom_line(aes(x = year, y =annual)) +
+p1<- ggplot(tidy_monthly_ice, aes(x = year, y =annual)) +
+  geom_line(size=2, color = '#023e8a') +
   theme_classic() +
   labs(x = 'Year',
        y = 'Arctic Ice Extent Index',
        title = 'Annual Arctic Ice Extent Index Trends',
-       caption = 'Data from NOAA')
+       caption = 'Source: National Ocean and Atmospheric Administration (NOAA)') +
+  theme(panel.background = element_rect(fill = '#e3f2fd'),
+        plot.background = element_rect(fill = '#e3f2fd'),
+        text=element_text(size=16,  family="AppleGothic"))
+
+p1
+
+ggsave(plot = p1, height = 6, width = 8, 'plot1-arctic-infographic.png')
+
+# Plot #1
+ggplot(tidy_monthly_ice, aes(x = year, y =annual)) +
+  geom_area(fill = 'white') +
+  theme_classic() +
+  labs(x = ' ',
+       y = 'Arctic Ice Extent Index',
+       title = 'Annual Arctic Ice Extent Index Trends',
+       caption = 'Source: National Ocean and Atmospheric Administratin (NOAA)') +
+  scale_x_continuous(breaks = scales::pretty_breaks()) +
+  scale_y_continuous(breaks = scales::pretty_breaks()) +
+
+  scale_y_reverse() +
+  theme(panel.background = element_rect(fill = '#e3f2fd'),
+        plot.background = element_rect(fill = '#e3f2fd'),
+        text=element_text(size=16,  family="AppleGothic"))
 ```
 ```{r}
 # fifteen_yr_ice <- tidy_monthly_ice |> 
@@ -77,22 +108,89 @@ ggplot(tidy_monthly_ice) +
 ```
 ## Plot #2
 ```{r}
+biomes <- read_csv(here::here('data', 'FireALTEstimatedPairsBurnedUnburned.csv'))
+
+
+# biomes %>% 
+# streamgraph(key = "biome", value = "estDepth", date = "date", 
+#             scale = "continuous", interactive = TRUE) 
+```
+
+```{r}
 
 north_hemisphere_ext <- extent_tidy |> 
   slice(65:2688)
   
+
+extent_tidy <- extent_tidy 
+  # mutate(coords = c('Baffin_Bay_Golf_of_St_Lawrence' = ))
+
 # Plot #2
 ggplot(extent_tidy, (aes(x = year, y = ice_ave, group = Region, fill = Region))) +
   geom_area() +
-  labs(x = 'Year', y = 'Average Ice Extent (km^2)',
-       title = 'Sea Ice Extent in the Northern Hemisphere from 1924-2024',
+  labs(x = ' ', y = 'Average Ice Extent (km^2)',
+       title = 'Sea Ice Extent in the Northern Hemisphere from 1850-2024',
        fill = '') +
   scale_y_continuous(labels = scales::comma_format()) +
-  scale_fill_viridis_d()+
-  theme_void() 
+  scale_fill_viridis_d(option = 'mako') +
+  theme_classic() +
+  scale_x_discrete(breaks = scales::pretty_breaks()) 
+
+# tidy_monthly_ice <- tidy_monthly_ice |> 
+#   slice(yea)
+
+ggplot(biomes) +
+  geom_area(aes(x = year, y = estDepth, group = distur, fill = distur)) +
+  scale_fill_manual(values = c('#3a7ca5', '#16425b')) +
+ # scale_fill_viridis_d(option = 'mako') +
+  theme_classic() +
+  scale_x_continuous(breaks = scales::pretty_breaks(), expand = c(0,0)) +
+#  geom_line(data = tidy_monthly_ice, aes(x = year, y =annual), size=2, color = '#023e8a') +
+  theme_classic() +
+  labs(x = ' ',
+       y = 'Estimated Depth (cm)',
+       title = 'Polar Opposites: A Warming Arctic',
+       subtitle = 'Active Layer Thickness (ALT) in the Arctic Tundra',
+       caption = 'ALT refers to the thickness of the layer above\npermafrost that freezes and thaws seasonally. \nData Source: Arctic Data Center',
+       fill = 'Fire Disturbance') +
+  theme(text=element_text(size=13,  family="AppleGothic"),
+        legend.title = element_text(size = 12, hjust = .5),                                  #sets legend title size
+              legend.position = c(.15, .2),   #sets legend to the top
+          legend.text = element_text(size = 12),
+        plot.caption = element_text(hjust = .5)) +
+  scale_x_continuous(breaks = scales::pretty_breaks(), position = 'top') +  # Move x-axis to the top
+  scale_y_reverse(expand = c(0,0))
+
+ggplot(biomes) +
+  geom_violin(aes(x = distur, y = estDepth, fill = permaExtent), width=2.1, size=0.2) +
+    scale_fill_viridis_d() +
+    scale_color_viridis_c() +
+  theme_classic() +
+  coord_flip() 
 
 
+ggplot(biomes, aes(x = x)) +
+  geom_density(aes(estDepth, fill = biome)) +
+  geom_density(aes(-estDepth, fill = permaExtent))
+
+
+
+
+ggplot(biomes, aes(x=x) ) +
+  # Top
+  geom_density( aes(x = estDepth, y = ..density.., fill = biome) ) +
+  geom_label( aes(x=4.5, y=0.25, label="variable1"), color="#69b3a2") +
+  # Bottom
+  geom_density( aes(x = estDepth, y = -..density.., fill= permaExtent)) +
+  geom_label( aes(x=4.5, y=-0.25, label="variable2"), color="#404080") +
+  theme_classic() +
+  xlab("value of x")
 ```
+```{r}
+ggplot(biomes) +
+  geom_density(aes(estDepth, fill = "biome"))
+```
+
 
 ```{r}
 
@@ -132,6 +230,66 @@ ggplot(roc_clean, aes(x = year, y = ave_roc)) +
   theme_minimal()
 ```
 
+```{r}
+# #Creating countdown .png files from 10 to "GO!"
+# png(file="sea_ice_data/images", width=200, height=200)
+#   for (i in c(10:1, "G0!")){
+#     plot.new()
+#     text(.5, .5, i, cex = 6)
+#   }
+# dev.off()
+#  
+# # Converting .png files in one .gif image using ImageMagick
+# system("/opt/local/bin/convert -delay 80 *.png example_1.gif")
+# # Remove .png files from working directory
+# file.remove(list.files(pattern=".png"))
+```
+
+```{r}
+ggplot() +
+ geom_sf(data = shapefile) +
+  geom_point(extent_tidy, aes(x = 'Latitude', y = 'Longitude'))
+```
+```{r}
+
+```
+
+
+
+```{r}
+library(magick)
+
+# List all PNG files in the directory (ensure you set the correct path)
+filenames <- list.files(path = "sea_ice_data/images", pattern = "\\.png$", full.names = TRUE)
+
+# Sort filenames if necessary (e.g., based on modification time)
+filenames <- sort(filenames)
+
+# Read the first image
+m <- image_read(filenames[1])
+
+# Loop through the remaining images and append them
+for (i in 2:length(filenames)) {
+  m <- c(m, image_read(filenames[i]))
+}
+
+# Animate the images (adjust fps, loop, and dispose settings as needed)
+m <- image_animate(m, fps = 100, loop = 1, dispose = "previous")
+
+# Save as GIF
+image_write(m, "movie.gif")
+
+```
+
+```{r}
+# Set your working directory where the images are stored
+setwd("sea_ice_data/images")
+
+# Use ImageMagick to create the animated GIF directly
+system("convert -delay 10 -loop 0 *.png movie.gif")
+
+```
+
 
 1. What have you learned about your data? Have any potentially interesting patterns emerged?
 
@@ -145,6 +303,19 @@ Yes! I have plotted the temporal trends over the 40 year data period. I have not
 
 3. What challenges do you foresee encountering with your data? These can be data wrangling and / or visualization challenges.
 Just from this exercise alone I foresee myself encountering issues with the sheer amount of data groups that I will be dealing with. Some ggplot things that I know I will be able to figure out, like perhaps breaking down the time blocks into shorter periods and faceting that way to see more closely continuous trends. Formatting the years so that it is not listing all the years overlapping may be a minor but necessary challenge. I envision breaking this down into smaller chunks as well. A less expected challenge may be finding ways to look for more interesting trends. I can maybe combine this dataset with global temperature data to visualize the inverse relationship. 
+
+```{r}
+
+
+
+library(magick)
+image_list <- lapply(list.files("sea_ice_data/images"), image_read)
+
+library(gifski)
+png_files <- list.files("sea_ice_data/images", pattern = ".*png$", full.names = TRUE)
+gifski(png_files, gif_file = "animation.gif", width = 800, height = 600, delay = 1)
+
+```
 
 
 

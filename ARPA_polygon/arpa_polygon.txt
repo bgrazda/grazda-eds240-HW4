@@ -1,0 +1,358 @@
+Identification_Information:
+  Citation:
+    Citation_Information:
+      Originator: US Arctic Research Commission
+      Publication_Date: 20090601
+      Title: US Arctic Research and Policy Act (ARPA) defined boundary of the Arctic
+      Geospatial_Data_Presentation_Form: vector digital data
+      Series_Information:
+        Series_Name: Arctic Research and Policy Act of 1984
+        Issue_Identification: Section 112
+      Publication_Information:
+        Publication_Place: Washington, DC
+        Publisher: US Arctic Research Commission
+      Online_Linkage: http://www.arctic.gov/
+      Online_Linkage: http://www.nsf.gov/od/opp/arctic/iarpc/arc_res_pol_act.jsp
+      Online_Linkage: http://armap.org
+  Description:
+    Abstract: The US Arctic Research and Policy Act (ARPA) of 1984 defines the Arctic in section 112; "the term 'Arctic' means all United States and foreign territory north of the Arctic Circle and all United States territory north and west of the boundary formed by the Porcupine, Yukon, and Kuskokwim Rivers; all contiguous seas, including the Arctic Ocean and the Beaufort, Bering and Chukchi Seas; and the Aleutian chain."
+    Purpose: The purpose of this digital data layer is to illustrate the ARPA boundary.
+    Supplemental_Information: The establishment of polygon topology was required to allow for shading the area encompassed by the ARPA definition.  For this reason, a line connecting the 45 km gap between the Kuskokwim and Yukon Rivers was added (following 160 degrees West Longitude) and a line demarcating the southern boundary of the Aleutian chain was created (based on the 24 nm  buffer around the islands known as the "Contiguous Zone."  For a detailed description of this area see:  http://en.wikipedia.org/wiki/Territorial_sea and http://www.nauticalcharts.noaa.gov/csdl/mbound.htm)
+  Time_Period_of_Content:
+    Time_Period_Information:
+      Single_Date/Time:
+        Calendar_Date: 20090601
+    Currentness_Reference: publication date
+  Status:
+    Progress: Complete
+    Maintenance_and_Update_Frequency: None planned
+  Spatial_Domain:
+    Bounding_Coordinates:
+      West_Bounding_Coordinate: -180.000000
+      East_Bounding_Coordinate: 180.000000
+      North_Bounding_Coordinate: 90.000000
+      South_Bounding_Coordinate: 24.366023
+  Keywords:
+    Theme:
+      Theme_Keyword_Thesaurus: ISO 19115 Topic Category
+      Theme_Keyword: boundaries
+      Theme_Keyword: location
+    Place:
+      Place_Keyword_Thesaurus: Geographic Names Information System
+      Place_Keyword: Alaska
+    Place:
+      Place_Keyword_Thesaurus: Geographic Names Information System
+      Place_Keyword: Arctic Ocean
+    Place:
+      Place_Keyword_Thesaurus: Geographic Names Information System
+      Place_Keyword: Arctic
+    Place:
+      Place_Keyword_Thesaurus: Geographic Names Information System
+      Place_Keyword: United States of America
+    Place:
+      Place_Keyword_Thesaurus: Geographic Names Information System
+      Place_Keyword: Canada
+    Place:
+      Place_Keyword_Thesaurus: Geographic Names Information System
+      Place_Keyword: Greenland
+    Place:
+      Place_Keyword_Thesaurus: Geographic Names Information System
+      Place_Keyword: Iceland
+    Place:
+      Place_Keyword_Thesaurus: Geographic Names Information System
+      Place_Keyword: Norway
+    Place:
+      Place_Keyword_Thesaurus: Geographic Names Information System
+      Place_Keyword: Denmark
+    Place:
+      Place_Keyword_Thesaurus: Geographic Names Information System
+      Place_Keyword: Sweden
+    Place:
+      Place_Keyword_Thesaurus: Geographic Names Information System
+      Place_Keyword: Finland
+    Place:
+      Place_Keyword_Thesaurus: Geographic Names Information System
+      Place_Keyword: Faroe Islands
+    Place:
+      Place_Keyword_Thesaurus: Geographic Names Information System
+      Place_Keyword: Svalbard
+    Place:
+      Place_Keyword_Thesaurus: Geographic Names Information System
+      Place_Keyword: Russia
+    Place:
+      Place_Keyword_Thesaurus: Dictionary of Alaska Place Names
+      Place_Keyword: Fairbanks
+    Place:
+      Place_Keyword_Thesaurus: Dictionary of Alaska Place Names
+      Place_Keyword: North Slope
+    Place:
+      Place_Keyword_Thesaurus: GEOnet Names Server
+      Place_Keyword: Iceland
+    Place:
+      Place_Keyword_Thesaurus: NASA/Global Change Master Directory (GCMD) Earth Science Keywords. Version 5.3.3
+      Place_Keyword: Polar
+  Access_Constraints: These data are public information and provided for general visual reference.  Users must assume responsibility to determine the usability of this data for their purposes.
+  Use_Constraints: Please cite these data as:  J.  Farrell, K. Farrow, A. Gaylord, 2009. Arctic Research Policy Act defined boundary of the Arctic. Washington D.C., USA:  US Arctic Research Commission.  Digital Media. http://www.arctic.gov/
+  Point_of_Contact:
+    Contact_Information:
+      Contact_Person_Primary:
+        Contact_Person: John Farrell
+        Contact_Organization: US Arctic Research Commission
+      Contact_Position: Executive Director
+      Contact_Address:
+        Address_Type: mailing and physical address
+        Address: 4350 N. Fairfax Dr., Suite 510
+        City: Arlington
+        State_or_Province: VA
+        Postal_Code: 22203
+        Country: USA
+      Contact_Voice_Telephone: 703-525-0113
+      Contact_Electronic_Mail_Address: jfarrell@arctic.gov
+  Data_Set_Credit: Funding for this map was provided by the National Science Foundation through the Arctic Research Mapping Application (armap.org) and contract #0520837 to CH2M HILL for the Interagency Arctic Research Policy Committee (IARPC).
+  Security_Information:
+    Security_Classification_System: FIPS Pub 199
+    Security_Classification: No Confidentiality
+    Security_Handling_Description: Standard Technical Controls
+  Native_Data_Set_Environment: Microsoft Windows 2000 Version 5.2 (Build 3790) Service Pack 2; ESRI ArcCatalog 9.3.1.1850
+Data_Quality_Information:
+  Attribute_Accuracy:
+    Attribute_Accuracy_Report: Unique attributes for the 2 polygons are included to allow for shading to differentiate the area defined within the ARPA boundary and the area north of 45 degrees north latitude.
+  Logical_Consistency_Report: The establishment of polygon topology was required to allow for shading the area encompassed by the ARPA definition.
+  Completeness_Report: Complete.
+  Positional_Accuracy:
+    Horizontal_Positional_Accuracy:
+      Horizontal_Positional_Accuracy_Report: No accuracy assessment has been performed against real world positions.  The representation of the southern boundary of the Aleutian Chain has been approximated for illustration purposes.
+  Lineage:
+    Source_Information:
+      Source_Citation:
+        Citation_Information:
+          Originator: ESRI
+          Publication_Date: 2005
+          Publication_Time: Unknown
+          Title: Names Latitudes and Longitudes
+      Type_of_Source_Media: DVD
+      Source_Time_Period_of_Content:
+        Time_Period_Information:
+          Single_Date/Time:
+            Calendar_Date: unknown
+        Source_Currentness_Reference: publication date
+      Source_Citation_Abbreviation: ESRI
+      Source_Contribution: Relevant portions of the Arctic Circle and 160 degrees West Longitude were derived from this data.
+    Source_Information:
+      Source_Citation:
+        Citation_Information:
+          Originator: Alaska Department of Fish and Game
+          Publication_Date: 20080602
+          Publication_Time: Unknown
+          Title: Anadromous Waters Catalog
+          Online_Linkage: http://www.sf.adfg.state.ak.us/SARR/AWC/index.cfm/FA/data.GIS
+      Type_of_Source_Media: online
+      Source_Time_Period_of_Content:
+        Time_Period_Information:
+          Single_Date/Time:
+            Calendar_Date: 20080602
+        Source_Currentness_Reference: publication date
+      Source_Citation_Abbreviation: ADFG Catalog
+      Source_Contribution: The Yukon, Porcupine and Kuskokwim Rivers were queried and copied from the Alaska Department of Fish and Game's Adadromous Waters Catalog of regional GIS layers (of the Arctic, Western and Interior regions.)
+    Source_Information:
+      Source_Citation:
+        Citation_Information:
+          Originator: Alaska Department of Natural Resources, Land Records information Section
+          Publication_Date: 20090428
+          Title: http://www.sf.adfg.state.ak.us/SARR/AWC/index.cfm/FA/data.GIS
+          Online_Linkage: http://dnr.alaska.gov/SpatialUtility/SUC?cmd=extract&layerid=67
+      Type_of_Source_Media: online
+      Source_Time_Period_of_Content:
+        Time_Period_Information:
+          Single_Date/Time:
+            Calendar_Date: 20090428
+        Source_Currentness_Reference: publication date
+      Source_Citation_Abbreviation: DNR
+      Source_Contribution: This data set was used to create the shoreline boundary from the mouth of the Kuskokwim River out to the end of the Alaska Peninsula.
+    Source_Information:
+      Source_Citation:
+        Citation_Information:
+          Originator: NOAA Office of Coast Survey
+          Publication_Date: Unknown
+          Title: US Maritime Zones / Boundaries - Contiguous Zone, Alaska
+          Online_Linkage: http://www.nauticalcharts.noaa.gov/csdl/mbound.htm
+      Type_of_Source_Media: online
+      Source_Time_Period_of_Content:
+        Time_Period_Information:
+          Single_Date/Time:
+            Calendar_Date: unknown
+        Source_Currentness_Reference: publication date
+      Source_Citation_Abbreviation: contzone_AK.ship
+      Source_Contribution: The 24 nm Contiguous Zone boundary was utilized in developing a southern boundary of the Aleutian Chain (gaps between the 24 nm buffers were simply connected to ensure polygon topology.)
+    Source_Information:
+      Source_Citation:
+        Citation_Information:
+          Originator: Encyclopedia Britannica
+          Originator: Wikipedia
+          Publication_Date: Unknown
+          Title: Aleutian Chain
+          Online_Linkage: http://en.wikipedia.org/wiki/Aleutian_Chain
+      Type_of_Source_Media: online
+      Source_Time_Period_of_Content:
+        Time_Period_Information:
+          Single_Date/Time:
+            Calendar_Date: unknown
+        Source_Currentness_Reference: ground condition
+      Source_Citation_Abbreviation: wiki
+      Source_Contribution: These sources were used to confirm the extent of the Aleutuan Chain.  The Aleutian Islands extend west from the Alaska Peninsula beginning at Sanak Island and extend to Attu Island.)
+    Process_Step:
+      Process_Description: Relevant sections of the data layers were selected using the attribute query tool and trace tool in ArcGIS ArcMap.  For example, the Yukon, Porcupine and Kuskokwim Rivers were queried and copied from the Alaska Department of Fish and Game's GIS layers of anadromous rivers catalog.  The relevant portion of the Arctic Circle was traced from the "Named Latitiudes and Longitudes" from the ESRI Data and Maps DVDs.  A 45 km portion of 160 degrees west longititude (also from "Names Latitudes and Longitudes") was utilized to join the gap between the Yukon and Kuskokwim Rivers (to establish polygon topology.)  The generalized coast of Alaska (based on 1:63,360 scale digital data) was used for the shoreline boundary from the mouth of the Kuskokwim River out to the end of the Alaska Peninsula.  The 24 nm Contiguous Zone boundary was utilized in developing a southern boundary of the Aleutian Chain (gaps between the 24 nm buffers were simply connected to ensure polygon topology.)
+      Process_Date: 20090601
+      Process_Contact:
+        Contact_Information:
+          Contact_Person_Primary:
+            Contact_Person: Allison Gaylord
+            Contact_Organization: Nuna Technologies
+          Contact_Position: Owner / GIS Specialist
+          Contact_Address:
+            Address_Type: mailing address
+            Address: PO Box 1483
+            City: Homer
+            State_or_Province: AK
+            Postal_Code: 99603
+            Country: USA
+          Contact_Voice_Telephone: 907-399-1120
+    Process_Step:
+      Process_Description: Dataset copied.
+      Source_Used_Citation_Abbreviation: C:\ARMAP\US_ARC\Boundary\ARPA
+      Process_Date: 20090628
+      Process_Time: 16562000
+Spatial_Data_Organization_Information:
+  Direct_Spatial_Reference_Method: Vector
+  Point_and_Vector_Object_Information:
+    SDTS_Terms_Description:
+      SDTS_Point_and_Vector_Object_Type: G-polygon
+      Point_and_Vector_Object_Count: 2
+Spatial_Reference_Information:
+  Horizontal_Coordinate_System_Definition:
+    Planar:
+      Map_Projection:
+        Map_Projection_Name: Lambert Azimuthal Equal Area
+        Lambert_Azimuthal_Equal_Area:
+          Longitude_of_Projection_Center: -150.000000
+          Latitude_of_Projection_Center: 90.000000
+          False_Easting: 0.000000
+          False_Northing: 0.000000
+      Planar_Coordinate_Information:
+        Planar_Coordinate_Encoding_Method: coordinate pair
+        Coordinate_Representation:
+          Abscissa_Resolution: 0.000100
+          Ordinate_Resolution: 0.000100
+        Planar_Distance_Units: meters
+    Geodetic_Model:
+      Horizontal_Datum_Name: D_WGS_1984
+      Ellipsoid_Name: WGS_1984
+      Semi-major_Axis: 6378137.000000
+      Denominator_of_Flattening_Ratio: 298.257224
+  Vertical_Coordinate_System_Definition:
+    Altitude_System_Definition:
+      Altitude_Datum_Name: WGS 1984
+      Altitude_Resolution: 9999
+      Altitude_Encoding_Method: Implicit coordinate
+Entity_and_Attribute_Information:
+  Detailed_Description:
+    Entity_Type:
+      Entity_Type_Label: ARPA, Arctic boundary
+      Entity_Type_Definition: Arctic Research Policy Act, Arctic Boundary
+      Entity_Type_Definition_Source: US Arctic Research Commission
+    Attribute:
+      Attribute_Label: FID
+      Attribute_Definition: Internal feature number.
+      Attribute_Definition_Source: ESRI
+      Attribute_Domain_Values:
+        Unrepresentable_Domain: Sequential unique whole numbers that are automatically generated.
+    Attribute:
+      Attribute_Label: Shape
+      Attribute_Definition: Feature geometry.
+      Attribute_Definition_Source: ESRI
+      Attribute_Domain_Values:
+        Unrepresentable_Domain: Coordinates defining the features.
+    Attribute:
+      Attribute_Label: OBJECTID
+      Attribute_Definition: Object Identifier
+      Attribute_Definition_Source: ESRI
+      Attribute_Domain_Values:
+        Enumerated_Domain:
+          Enumerated_Domain_Value: ObjectID
+          Enumerated_Domain_Value_Definition: Object Identifier
+          Enumerated_Domain_Value_Definition_Source: ESRI
+    Attribute:
+      Attribute_Label: PLACENAME
+      Attribute_Definition: Place Name
+      Attribute_Definition_Source: US Arctic Research Commission
+      Attribute_Domain_Values:
+        Enumerated_Domain:
+          Enumerated_Domain_Value: PLACENAME
+          Enumerated_Domain_Value_Definition: Place Name
+          Enumerated_Domain_Value_Definition_Source: US Arctic Research Commission
+    Attribute:
+      Attribute_Label: Shape_Leng
+      Attribute_Definition: Shape Length
+      Attribute_Definition_Source: ESRI
+      Attribute_Domain_Values:
+        Enumerated_Domain:
+          Enumerated_Domain_Value: Shape_Leng
+          Enumerated_Domain_Value_Definition: Shape Length
+          Enumerated_Domain_Value_Definition_Source: ESRI
+    Attribute:
+      Attribute_Label: Shape_Area
+      Attribute_Definition: Area of feature in internal units squared.
+      Attribute_Definition_Source: ESRI
+      Attribute_Domain_Values:
+        Unrepresentable_Domain: Positive real numbers that are automatically generated.
+Distribution_Information:
+  Distributor:
+    Contact_Information:
+      Contact_Person_Primary:
+        Contact_Person: John Farrell
+        Contact_Organization: US Arctic Research Commission
+      Contact_Position: Executive Director
+      Contact_Address:
+        Address_Type: mailing and physical address
+        Address: 4350 N. Fairfax Dr., Suite 510
+        City: Arlington
+        State_or_Province: VA
+        Postal_Code: 22203
+        Country: USA
+      Contact_Voice_Telephone: 703-525-0113
+      Contact_Electronic_Mail_Address: jfarrell@arctic.gov
+  Resource_Description: Downloadable Data
+  Distribution_Liability: The US Arctic Research Commission shall not be held liable for improper or incorrect use of the data described and/or contained herein. The data are not better than the original sources from which they were derived.  It is the responsibility of the data user to use the data appropriately and consistently within the limitations of geospatial data in general and these data in particular. The US Arctic Research Commission gives no warranty, expressed or implied, as to the accuracy, reliability, or completeness of these data. These data and related graphics are not legal documents and are not intended to be used as such.  This disclaimer applies both to individual use of the data and aggregate use with other data.
+  Standard_Order_Process:
+    Digital_Form:
+      Digital_Transfer_Information:
+        Format_Name: ArcGIS Shapefile
+        Format_Version_Number: 9.3
+        File_Decompression_Technique: WinZip
+        Transfer_Size: 513 KB
+      Digital_Transfer_Option:
+        Online_Option:
+          Computer_Contact_Information:
+            Network_Address:
+              Network_Resource_Name: http://armap.org
+    Fees: None
+  Custom_Order_Process: Download from http://armap.org
+Metadata_Reference_Information:
+  Metadata_Date: 20090504
+  Metadata_Contact:
+    Contact_Information:
+      Contact_Person_Primary:
+        Contact_Person: Allison Gaylord
+        Contact_Organization: Nuna Technologies
+      Contact_Position: Owner / GIS Specialist
+      Contact_Address:
+        Address_Type: mailing and physical address
+        Address: 1200 Pennsylvania Avenue, N.W.
+        City: Washington
+        State_or_Province: DC
+        Postal_Code: 20460
+      Contact_Voice_Telephone: (907) 399-1120
+      Contact_Electronic_Mail_Address: nunatech@usa.net
+  Metadata_Standard_Name: FGDC Content Standards for Digital Geospatial Metadata
+  Metadata_Standard_Version: FGDC-STD-001-1998
+  Metadata_Time_Convention: local time
