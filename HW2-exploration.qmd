@@ -12,6 +12,8 @@ library(tidyverse)
 library(here)
 library(tmap)
 library(sf)
+library(ggExtra)
+library(patchwork)
 ```
 
 ```{r, warning=FALSE, message=FALSE}
@@ -139,27 +141,47 @@ ggplot(extent_tidy, (aes(x = year, y = ice_ave, group = Region, fill = Region)))
 # tidy_monthly_ice <- tidy_monthly_ice |> 
 #   slice(yea)
 
-ggplot(biomes) +
+biome_plot <- ggplot(biomes) +
   geom_area(aes(x = year, y = estDepth, group = distur, fill = distur)) +
-  scale_fill_manual(values = c('#3a7ca5', '#16425b')) +
+  scale_fill_manual(values = c('#16425b', '#3a7ca5')) +
  # scale_fill_viridis_d(option = 'mako') +
   theme_classic() +
-  scale_x_continuous(breaks = scales::pretty_breaks(), expand = c(0,0)) +
 #  geom_line(data = tidy_monthly_ice, aes(x = year, y =annual), size=2, color = '#023e8a') +
   theme_classic() +
   labs(x = ' ',
        y = 'Estimated Depth (cm)',
        title = 'Polar Opposites: A Warming Arctic',
-       subtitle = 'Active Layer Thickness (ALT) in the Arctic Tundra',
+       subtitle = 'Increasing Active Layer Thickness (ALT) in the Arctic Tundra\nmelts the permafrost layer more sporadically',
        caption = 'ALT refers to the thickness of the layer above\npermafrost that freezes and thaws seasonally. \nData Source: Arctic Data Center',
        fill = 'Fire Disturbance') +
   theme(text=element_text(size=13,  family="AppleGothic"),
         legend.title = element_text(size = 12, hjust = .5),                                  #sets legend title size
-              legend.position = c(.15, .2),   #sets legend to the top
-          legend.text = element_text(size = 12),
-        plot.caption = element_text(hjust = .5)) +
-  scale_x_continuous(breaks = scales::pretty_breaks(), position = 'top') +  # Move x-axis to the top
+              legend.position = c(.25, .25),   #sets legend to the top
+          legend.text = element_text(size = 10),
+        plot.caption = element_text(hjust = .5),
+        panel.border = element_rect(color = "black", fill = NA, size = .5)) +
+  scale_x_continuous(expand = c(0,0), breaks = scales::pretty_breaks(), position = 'top') +  # Move x-axis to the top
   scale_y_reverse(expand = c(0,0))
+
+biome_plot
+
+biomes$permaExtent <- factor(biomes$permaExtent, 
+                             levels = c('C', 'D', 'S'), 
+                             labels = c('Continuous', 'Discontinuous', 'Sporadic'))
+
+p2 <- ggplot(biomes) +
+  geom_density(aes(y = estDepth, fill = permaExtent), alpha = 0.5) +  # Swap x → y
+  scale_y_reverse() +  # Flip so 0 is at the top
+    scale_fill_viridis_d(option = 'mako') +
+ theme_void() +  # Remove extra elements for a clean look
+  labs(fill = 'Permafrost Extent') +
+  theme(text=element_text(size=8,  family="AppleGothic"))
+
+p2
+# Combine the two plots
+combined_viz <- biome_plot + p2 + plot_layout(widths = c(4, 1))  # Main plot wider than density plot
+
+ggsave(plot = combined_viz, filename = 'arctic-permafrost.png', width = 8, height = 6)
 
 ggplot(biomes) +
   geom_violin(aes(x = distur, y = estDepth, fill = permaExtent), width=2.1, size=0.2) +
@@ -247,7 +269,7 @@ ggplot(roc_clean, aes(x = year, y = ave_roc)) +
 
 ```{r}
 ggplot() +
- geom_sf(data = shapefile) +
+ geom_sf(data = shapefile) 
   geom_point(extent_tidy, aes(x = 'Latitude', y = 'Longitude'))
 ```
 ```{r}

@@ -1,0 +1,249 @@
+---
+title: "EDS 240: Homework 3 - Arctic Sea Ice"
+author: 'Brooke Grazda'
+format:
+  html:
+    embed-resources: true
+editor: visual
+date: '02-25-2025'
+---
+![Greenland sea](greenland-sea.avif)
+
+
+# Visualizing Arctic Sea Ice 
+```{r}
+#| code-fold: true
+#| output: false
+#| quiet: true
+
+library(tidyverse)
+library(here)
+library(tmap)
+library(sf)
+library(ggExtra)
+library(patchwork)
+```
+
+```{r, warning=FALSE, message=FALSE}
+#| code-fold: true
+#| output: false
+#| quiet: true
+
+# Load data
+ice_area <- read_csv(here('sea_ice_data', 'sibt_areas_v2.csv'))
+ice_extent <-read_csv(here('sea_ice_data', 'sibt_extents_v2.csv')) 
+
+ice_monthly <- readxl::read_excel(here("sea_ice_data", "Sea_Ice_Index_Monthly_Data_by_Year_G02135_v3.0.xlsx"))
+
+roc_arctic <- readxl::read_excel(here("sea_ice_data", "Sea_Ice_Index_Rates_of_Change_G02135_v3.0.xlsx"))
+
+shapefile <- read_sf(here('ARPA_polygon', 'ARPA_polygon.shp'))
+
+latlong <- readxl::read_xlsx(here('sea_ice_data', 'arctic_regions_latlong.xlsx'))
+
+biomes <- read_csv(here::here('data', 'FireALTEstimatedPairsBurnedUnburned.csv'))
+
+daily <- readxl::read_xlsx(here('sea_ice_data', 'Sea_Ice_Index_Daily_Extent_G02135_v3.0.xlsx'))
+```
+```{r, warning=FALSE, message=FALSE}
+#| code-fold: true
+# Tidy daily ice data
+
+daily_tidy <- daily |> 
+  pivot_longer(cols = c(3:53), names_to = 'year', values_to = 'extent_index') |> 
+  #filter(!is.na(...1)) |> 
+  rename(month = ...1, 
+         day = ...2) |> 
+  mutate(
+    month = factor(month, levels = month.name, labels = month.abb),  # Optional: Convert to abbreviated month names
+    day = as.numeric(day)  # Ensure day is numeric
+  ) |> 
+  fill(month, .direction = "down") |> 
+  mutate(year = as.numeric(str_extract(year, "\\d+"))) |> 
+  filter(year %in% c(2000, 2020))
+
+
+ggplot(daily_tidy, aes(x = day, y = month, fill = extent_index)) +
+  geom_tile(color = "white") +  # Use white borders between tiles
+  scale_fill_viridis_c(option = "mako", name = "Extent Index") +  # Adjust color scale
+  facet_wrap(~year) +  # Separate heatmaps for each year
+  theme_minimal() +
+  labs(
+    title = "Daily Sea Ice Extent Heatmap Over 20 Year Period",
+    x = "Day of the Month",
+    y = "Month",
+    caption = "Over the 20 year period, sea ice extent is lower on average\n in 2020 compared to 2000 in summer and winter months.\n \nSource: National Oceanic and Atmospheric Administration (NOAA)"
+  ) +
+  theme(
+    axis.text.x = element_text(hjust = 1),  # Rotate x-axis labels for readability
+    legend.position = "bottom",
+    text=element_text(size=15,  family="AppleGothic"),
+    plot.caption = element_text(hjust = .5),)
+  
+
+
+
+```
+
+
+
+```{r, warning=FALSE, message=FALSE}
+#| code-fold: true
+# Rename first column as "YYYYDDD" and the rest based on the first row
+colnames(ice_extent) <- ice_extent[1,]
+ice_extent <- ice_extent[-1,]  # Remove the row used for column names
+# Remove the first row (which contains "RegnArea")
+ice_area_cleaned <- ice_area[-1, ]
+
+# Convert to long format
+extent_tidy_locs <- ice_extent %>%
+  pivot_longer(cols = 2:18, names_to = "Region", values_to = "ice_extent") %>%
+  slice(-(1:18)) |>  # Fine to start with year 1850
+  mutate(#YYYDDD = (as.string(YYYYDDD)),
+         ice_extent = as.numeric(ice_extent)) |> # extent in square kilometers 
+  mutate(year = sub("^(.{4}).*", "\\1", YYYYDDD)) |> 
+  select(-YYYYDDD) |> 
+  group_by(Region, year) |> 
+  summarise(ice_ave = mean(ice_extent)) |> 
+  ungroup() |> 
+  mutate(region = str_trim(Region)) |> 
+  filter(Region != 'Northern_Hemisphere') |> 
+  left_join(latlong)
+
+
+tidy_monthly_ice <- ice_monthly |> 
+  janitor::clean_names() |> 
+  rename(year = x1) |> 
+  select(-x14) |> 
+  pivot_longer(cols = 2:13,
+               names_to = "month", 
+               values_to = "ice_extent")  |> 
+   mutate(month = str_to_title(month)) |>  # Capitalize first letter
+  mutate(month = factor(month, levels = month.name, labels = month.abb)) 
+
+```
+
+```{r, warning=FALSE, message=FALSE}
+#| code-fold: true
+ggplot(tidy_monthly_ice, aes(x = month, y = ice_extent, group = year, colour = year)) +
+  geom_line(size = 1) +
+  scale_color_viridis_c(option = 'mako') +
+  scale_y_continuous(limits = c(0, NA), expand = expansion(mult = 0.05)) +
+  theme_classic() +
+  labs(y = 'Sea Ice Extent Index',
+       title = 'Seasonal Fluctuations of Sea Ice Extent',
+       x = ' ',
+       caption = 'Source: National Oceanic and Atmospheric Administration (NOAA)',
+       color = 'Year') +
+  theme(legend.position = 'bottom',
+        #legend.box.margin = margin(t = 10, r = 10, b = 10, l = 10),  # Adjusts legend margins
+       # plot.margin = margin(t = 15, r = 15, b = 15, l = 15),
+        legend.key.width = unit(2, "cm"),  # Stretches legend keys (adjust as needed)
+    #legend.spacing.x = unit(0.5, "cm"),
+    text=element_text(size=15,  family="AppleGothic"))
+
+```
+
+
+
+```{r}
+#| code-fold: true
+biome_plot <- ggplot(biomes) +
+  geom_area(aes(x = year, y = estDepth, group = distur, fill = distur)) +
+  scale_fill_manual(values = c('#16425b', '#3a7ca5')) +
+ # scale_fill_viridis_d(option = 'mako') +
+  theme_classic() +
+#  geom_line(data = tidy_monthly_ice, aes(x = year, y =annual), size=2, color = '#023e8a') +
+  theme_classic() +
+  labs(x = ' ',
+       y = 'Estimated Depth (cm)',
+       title = 'Sea Ice Disturbance and Arctic Permafrost',
+       subtitle = 'Increasing Active Layer Thickness (ALT) in the Arctic Tundra\nmelts the permafrost layer more sporadically due \nto rising global temperatures',
+       caption = 'ALT refers to the thickness of the layer above\npermafrost that freezes and thaws seasonally. \nData Source: Arctic Data Center',
+       fill = 'Disturbance') +
+  theme(text=element_text(size=13,  family="AppleGothic"),
+       # legend.title = element_text(size = 12, hjust = .5),                                  #sets legend title size
+              legend.position = c(.25, .25),   #sets legend to the top
+     #  legend.position = 'bottom',
+          legend.text = element_text(size = 10),
+        plot.caption = element_text(hjust = .5),
+        panel.border = element_rect(color = "black", fill = NA, size = .5)) +
+  scale_x_continuous(expand = c(0,0), breaks = scales::pretty_breaks(), position = 'top') +  # Move x-axis to the top
+  scale_y_reverse(expand = c(0,0))
+
+#biome_plot
+
+biomes$permaExtent <- factor(biomes$permaExtent, 
+                             levels = c('C', 'D', 'S'), 
+                             labels = c('Continuous', 'Discontinuous', 'Sporadic'))
+
+p2 <- ggplot(biomes) +
+  geom_density(aes(y = estDepth, fill = permaExtent), alpha = 0.5) +  # Swap x → y
+  scale_y_reverse() +  # Flip so 0 is at the top
+    scale_fill_viridis_d(option = 'mako') +
+ theme_void() +  # Remove extra elements for a clean look
+  labs(fill = 'Permafrost Extent') +
+  theme(text=element_text(size=12,  family="AppleGothic"))
+        #legend.position = 'bottom')
+
+#p2
+# Combine the two plots
+combined_viz <- biome_plot + p2 + plot_layout(widths = c(4, 1))  # Main plot wider than density plot
+
+combined_viz
+#ggsave(plot = combined_viz, filename = 'arctic-permafrost.png', width = 8, height = 6)
+```
+
+```{r}
+#| code-fold: true
+
+library(gifski)
+png_files <- list.files("sea_ice_data/images", pattern = ".*png$", full.names = TRUE)
+gifski(png_files, gif_file = "animation.gif", width = 800, height = 600, delay = 1)
+```
+
+![Arctic circle](animation.gif)
+
+# Description
+
+## 1. Which option do you plan to pursue? 
+I still plan on pursuing option 1, the infographic.
+
+## 2 Restate your question(s). Has this changed at all since HW #1? If yes, how so?
+When do we see the greatest reduction or increase in sea ice extent? How has sea ice changed over many years? How does decreasing sea ice extent impact permafrost layers? 
+
+My first two questions are largely the same to my initial proposal, but I decided to ask the last question about permafrost because I think it is an interesting component to supplement these trends! I found a cool dataset from the Arctic Data Center that I incorporated. 
+
+## 3. Explain which variables from your data set(s) you will use to answer your question(s), and how.
+
+I will be using year, month, date, average layer thickness depth, and other categorical permafrost variables to help answer my questions. Much of the original NOAA data did not have many categorical variables like permafrost extent and disturbance, so this dataset from the Arctic Data Center have some really interesting observations that classify their measurements with categories. Since there is seasonal fluctuations, I want to show the daily ice extent along with the monthly ice extent curve, portrayed in different ways ,a heatmap and a line plot. My permafrost plot is an area plot that looks like icicles, and I want to show density curves of different permafrost extent indicators based on the ALT depth. This will answer my last question, and the other temporal plots will answer the first two questions.
+
+## 4. 
+Sample Data Viz 1: 
+Derek Watkins - 'Yearly fluctuations in are of Arctic covered by ice'
+![Derek Watkins Sample Viz](sample_data_viz.png)
+The sample data viz above was shown in class and it is so cool! I love that they highlighted important lines and pointed out specific points. I think we are using the same data so it is definitely possible, but I like the annotation elements to the text. I am curious if there is a way to annotate things to frame it with permafrost. For example, as ice extent is on the decline, perhaps there is an event that I can note that is not already on the sample visualization. I think it is now a question of which lines are the most important to highlight. 
+
+Sample Data Viz #2: 
+Philippe Rekacewicz - Where is permafrost located?
+![Map of Arctic Circle](sample_permafrost.jpeg)
+
+I really want to add a geospatial component to my infographic. I have a shapefile of the arctic circle, but it is just a single polygon and I definitely need a refresher on geospatial analyses. I like how they highlgihted the permafrost layers through a map, because my data uses the same categories. I also have another data set with locations of sea ice area, and I manually went into google earth and extracted coordinates, so I am curious if I am able to make something like this combining different sites, or perhaps just highlighting certain points in the arctic circle with a bubble chart where the size of the bubble corresponds with lost ice area. 
+
+## 6: Mockup Sketch
+![Sketched out mockup](infograph-mockup.JPG)
+
+## 7.
+### a. What challenges did you encounter or anticipate encountering as you continue to build / iterate on your visualizations in R? If you struggled with mocking up any of your three visualizations (from #6, above), describe those challenges here.
+
+I think the bulk of my challenges were centered around the message that i want to deliver and focusing on the most interesting takeaways from my infographic. I came to the conclusion that the most interesting thing I found from it was when I synthesized my permafrost data with the NOAA arctic sea ice extent data to provide more information to a reader. I do think that I need to streamline that viz a little more/ maybe break it up / use better highlighting methods because it does convey a lot of information at once (Viz #3). I am still struggling to mockup the map component because the shapefile that I found of the arctic circle is very bare bones and I need to think a little harder about how that is going to happen. However, I did create a gif using iamge data that I won't count towards one of my three visualizations but I thought was super cool to incorporate somehow. 
+
+### b. What ggplot extension tools / packages do you need to use to build your visualizations? Are there any that we haven’t covered in class that you’ll be learning how to use for your visualizations?
+
+I used `geom_tile()` to create my heatmap, which was inspired by the visualization showed in class for a heat map/daily data example. I also used patchwork to paste my two visualtions together in viz #3, and I had a lot of fun choosing fonts and color schemes! I selected the mako viridis option for my first two visualizations because it seemed the most icy and relevant for arctic data. I don't think I am going to play with any interactivity or htmlwidgets, but I did use the magick library to create a gif that I really want to use in my infographic if possible. 
+
+### c. What feedback do you need from the instructional team and / or your peers to ensure that your intended message is clear?
+
+Is there a better way to draw the link between active layer thickness of permafrost and sea ice extent? 
+
+I manually found the lat/long coordinates from google earth that correspond to different locations that one of my datasets include, I am curious what would be the best way to plot this with the shapefile? I can explain more in office hours, but ideally I would like to have the ice area lost be corresponding to a bubble on the map as I tried to draw in my sketch. Thank you!
